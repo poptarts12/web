@@ -142,8 +142,8 @@
 }
 .home-icon01 {
   fill: var(--dl-color-gray-white);
-  width: var(--dl-size-size-xsmall);
-  height: var(--dl-size-size-xsmall);
+  width: var(--dl-size-size-small);
+  height: var(--dl-size-size-small);
 }
 .home-nav1 {
   flex: 0 0 auto;
