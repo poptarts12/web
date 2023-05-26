@@ -73,14 +73,17 @@
   justify-content: space-between;
 }
 .home-branding {
-  width: 171px;
-  height: 101px;
+  width: 190px;
+  height: 191px;
   object-fit: cover;
+  align-items: left;
+  margin-left: -60px; /* Adjust this value as needed for a greater leftward shift */
 }
 .home-burger-menu {
   display: flex;
   align-items: center;
   justify-content: center;
+
 }
 .home-hamburger {
   cursor: pointer;
@@ -222,6 +225,7 @@
   font-size: 90px;
   max-width: 790px;
   font-style: normal;
+  font-family: 'Urbanist', sans-serif;
   font-weight: 500;
 }
 .home-text006 {
@@ -3079,6 +3083,8 @@
   .home-text008 {
     font-size: 16px;
     line-height: 24px;
+    font-family: 'Playfair', serif;
+    font-family: 'Urbanist', sans-serif;
   }
   .home-text010 {
     font-size: 16px;
