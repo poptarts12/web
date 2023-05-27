@@ -48,6 +48,20 @@
   border-radius: 40px;
 }
 
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+  .button {
+    padding: 16px 24px; /* Adjust the padding for smaller screens */
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .button {
+    padding: 12px 16px; /* Further adjust the padding for smaller screens */
+  }
+}
+
+
 
 .button:hover {
   opacity: 0.7;

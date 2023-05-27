@@ -268,8 +268,12 @@
   font-style: normal;
   font-weight: 400;
   line-height: 52px;
-  margin-right: 158px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%; /* Adjust the width as needed */
 }
+
+
 .home-statistics {
   width: 100%;
   display: flex;
