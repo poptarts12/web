@@ -48,6 +48,7 @@
   border-radius: 40px;
 }
 
+
 /* Responsive styles */
 @media screen and (max-width: 600px) {
   .button {
@@ -122,31 +123,39 @@
 .banner {
   cursor: pointer;
   display: flex;
-  max-width: auto;
+  max-width: 30%;
   align-items: flex-start;
+  justify-content: flex-start; /* Add justify-content property */
   border-width: 0px;
   flex-direction: row;
   background-color: #0000F5;
+  transition: transform 0.3s ease-out; /* Replace width and height with transform property */
+  overflow: hidden;
+  flex-shrink: 0;
 }
+
 .banner-smaller {
   width: 620px;
   height: 460px;
 }
+
 .swiper-pagination {
   cursor: grab;
   z-index: 10;
   list-style: none;
   text-align: center;
 }
+
 .swiper-pagination-bullet {
   width: 12px;
   cursor: pointer;
   height: 12px;
   display: inline-block;
-  transition: width .25s ease;
+  transition: width 0.25s ease;
   border-radius: 12px;
-  background-color: ef9911;
+  background-color: #ef9911;
 }
+
 .swiper-pagination-bullet-active {
   width: 45px;
   opacity: 1 !important;
@@ -196,25 +205,30 @@
 
 
 .blaze-track {
-  cursor: grabbing;
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to top, hsl(0deg 0% 2%), hsl(0deg 0% 9%));
 }
 
 
 .slider {
-  -slides-to-show: 3;
+  -slides-to-show: 2;
 }
 
 .Content {
   font-size: 16px;
   font-family: Inter;
-  font-weight: 400;
+  font-weight: 40
   line-height: 1.15;
   text-transform: none;
   text-decoration: none;
 }
-@media(max-width: 991px) {
+@media(max-width: 915px) {
   .banner {
     flex-direction: column;
+    max-width: 30%
   }
   .swiper-pagination-bullet {
     opacity: 0.5;

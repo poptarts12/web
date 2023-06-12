@@ -1,7 +1,3 @@
-.button-container {
-  display: flex;
-  position: relative;
-}
 
 .check-check {
   width: 32px;
@@ -419,7 +415,7 @@
 .home-slider1 {
   gap: var(--dl-space-space-fiveunits);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-direction: row;
 }
 .home-slider-container {
@@ -690,7 +686,6 @@
   line-height: 36px;
 }
 .home-button1 {
-  border: 2px dashed rgba(120, 120, 120, 0.4);
   display: flex;
   align-items: flex-end;
   flex-direction: row;
@@ -838,7 +833,6 @@
   font-weight: 400;
 }
 .home-text042 {
-  font-style: italic;
   font-family: Playfair Display;
   font-weight: 500;
 }
@@ -864,6 +858,32 @@
   flex-direction: column;
   justify-content: center;
 }
+@media (max-width: 768px) {
+  .home-testimonial {
+    flex-direction: column;
+  }
+
+  .home-information {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .home-icon19 {
+    width: 40px;
+    height: 40px;
+  }
+
+  .home-from1 {
+    width: 100%;
+    max-width: 148px;
+  }
+
+  .home-from {
+    width: 100%;
+    max-width: 148px;
+  }
+}
+
 .home-text046 {
   color: rgb(255, 255, 255);
   font-style: italic;
@@ -1179,6 +1199,7 @@
   width: 154px;
   object-fit: cover;
 }
+
 .home-create {
   gap: var(--dl-space-space-fourunits);
   width: 100%;
@@ -1201,7 +1222,10 @@
   flex-direction: column;
   padding-bottom: 120px;
   justify-content: center;
-  background-color: #0000F5;
+  background-image: url('public/playground_assets/demo contain.gif');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 .home-header13 {
   display: flex;
@@ -1220,7 +1244,6 @@
 }
 .home-navlink01 {
   text-decoration: none;
-  background-color: #000000;
 }
 .home-comparision {
   gap: var(--dl-space-space-fiveunits);
@@ -1377,7 +1400,6 @@
 }
 .home-text065 {
   color: var(--dl-color-gray-white);
-  text-transform: uppercase;
 }
 .home-row04 {
   width: 100%;
@@ -1420,7 +1442,6 @@
 }
 .home-text067 {
   color: var(--dl-color-gray-white);
-  text-transform: uppercase;
 }
 .home-row06 {
   width: 100%;
@@ -1464,7 +1485,7 @@
 }
 .home-text069 {
   color: var(--dl-color-gray-white);
-  text-transform: uppercase;
+  text-align: center;
 }
 .home-row08 {
   width: 100%;
