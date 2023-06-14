@@ -582,9 +582,8 @@
 }
 .home-caption10 {
   color: rgb(204, 204, 255);
-  width: 304px;
   max-width: 600px;
-  line-height: 24px;
+  line-height: 1.5;
 }
 .home-more2 {
   gap: 4px;
@@ -2627,6 +2626,7 @@
     height: 11px;
   }
   .home-heading04 {
+    height: 25px;
     font-size: 18px;
   }
   .home-caption10 {

@@ -228,7 +228,7 @@
 @media(max-width: 915px) {
   .banner {
     flex-direction: column;
-    max-width: 30%
+    max-width: 20%
   }
   .swiper-pagination-bullet {
     opacity: 0.5;
