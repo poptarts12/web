@@ -1472,8 +1472,8 @@
   flex-direction: row;
 }
 .home-row07 {
-  width: 763px;
-  height: 115px;
+  width: 736.25px;
+  height: 113px;
   display: flex;
   align-items: center;
   border-color: #313133;
@@ -1883,10 +1883,6 @@
 .home-image11 {
   width: 100%;
   object-fit: cover;
-}
-.home-text106 {
-  color: #7C7C80;
-  line-height: 24px;
 }
 .home-links {
   gap: 120px;
