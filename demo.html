@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
     <meta property="twitter:card" content="summary_large_image" />
-
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.10.1"></script>
     <style data-tag="reset-style-sheet">
       html {  line-height: 1.15;}body {  margin: 0;}* {  box-sizing: border-box;  border-width: 0;  border-style: solid;}p,li,ul,pre,div,h1,h2,h3,h4,h5,h6,figure,blockquote,figcaption {  margin: 0;  padding: 0;}button {  background-color: transparent;}button,input,optgroup,select,textarea {  font-family: inherit;  font-size: 100%;  line-height: 1.15;  margin: 0;}button,select {  text-transform: none;}button,[type="button"],[type="reset"],[type="submit"] {  -webkit-appearance: button;}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner {  border-style: none;  padding: 0;}button:-moz-focus,[type="button"]:-moz-focus,[type="reset"]:-moz-focus,[type="submit"]:-moz-focus {  outline: 1px dotted ButtonText;}a {  color: inherit;  text-decoration: inherit;}input {  padding: 2px 4px;}img {  display: block;}html { scroll-behavior: smooth  }
     </style>
@@ -158,27 +158,77 @@
             </button>
           </div>
         </section>
-        <section class="demo-slides">
-          <div class="demo-slider slider blaze-slider"></div>
-
-          
-          <div>
-            <dangerous-html
-              html="<script>
-const el = document.querySelector('.blaze-slider')
-
-new BlazeSlider(el, {
-  all: {
-    slidesToShow: 3,
-    slideGap: '80px',
-    loop: true,
-    enableAutoplay: true,
-  },
-})
-</script>"
-            ></dangerous-html>
+          <div class="new-demo-section">
+            <div class="new-demo-content">
+              <div class="new-demo-text">Let's explore the capabilities of our AI camera</div>
+                <button id="start-button" class="new-demo-action-button" onclick="init()">Start</button>
           </div>
-        </section>
+          <div id="webcam-container" class="new-demo-webcam"></div>
+          <div id="label-container" class="new-demo-label"></div>
+          <div id="error-container" class="new-demo-error"></div>
+          <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
+          <script type="text/javascript">
+          const URL = "https://teachablemachine.withgoogle.com/models/iC5r7nsWm/";
+          let model, webcam, labelContainer, maxPredictions;
+          let initialized = false; // Flag variable to track initialization status
+
+          async function init() {
+            const errorContainer = document.getElementById("error-container");
+            errorContainer.innerText = ""; // Clear error message at the beginning
+
+            if (initialized) {
+              return; // Return if already initialized
+            }
+
+            function displayError(message) {
+              errorContainer.innerText = message;
+            }
+
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            try {
+              model = await tmImage.load(modelURL, metadataURL);
+              const flip = true; // whether to flip the webcam
+              webcam = new tmImage.Webcam(400, 400, flip);
+              await webcam.setup();
+              await webcam.play();
+
+              document.getElementById("webcam-container").appendChild(webcam.canvas);
+
+              labelContainer = document.getElementById("label-container");
+              maxPredictions = model.getTotalClasses(); // Set the correct number of predictions
+              for (let i = 0; i < maxPredictions; i++) {
+                labelContainer.appendChild(document.createElement("div"));
+              }
+
+              initialized = true; // Set initialization flag to true
+              document.getElementById("start-button").disabled = true; // Disable the button after initialization
+
+              loop(); // Call the loop function
+            } catch (error) {
+              displayError("Failed to initialize the webcam and model. Please check the URL, ensure the webcam is properly connected, or try again later.");
+              console.error(error);
+            }
+          }
+
+          async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+          }
+
+          async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            for (let i = 0; i < maxPredictions; i++) {
+              const classPrediction =
+                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+              labelContainer.childNodes[i].innerHTML = classPrediction;
+            }
+          }
+          </script>
+        </div>
         <section class="demo-faq">
           <div class="demo-header1"><h2 class="demo-heading1">Q&amp;A</h2></div>
           <div class="demo-content">
@@ -274,10 +324,6 @@ new BlazeSlider(el, {
                   src="public/playground_assets/image-1500h.png"
                   class="demo-image1"
                 />
-                <span class="demo-text41">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </span>
               </div>
               
               <div class="demo-links">
@@ -358,5 +404,6 @@ document.addEventListener('DOMContentLoaded', function() {
       src="https://unpkg.com/@teleporthq/teleport-custom-scripts"
     ></script>
     <script src="https://unpkg.com/blaze-slider@latest/dist/blaze-slider.min.js"></script>
+    <script src="tmImage.js"></script>
   </body>
 </html>
