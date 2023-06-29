@@ -161,74 +161,104 @@
           <div class="new-demo-section">
             <div class="new-demo-content">
               <div class="new-demo-text">Let's explore the capabilities of our AI camera</div>
-                <button id="start-button" class="new-demo-action-button" onclick="init()">Start</button>
-          </div>
-          <div id="webcam-container" class="new-demo-webcam"></div>
-          <div id="label-container" class="new-demo-label"></div>
-          <div id="error-container" class="new-demo-error"></div>
-          <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-          <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
-          <script type="text/javascript">
-          const URL = "https://teachablemachine.withgoogle.com/models/iC5r7nsWm/";
-          let model, webcam, labelContainer, maxPredictions;
-          let initialized = false; // Flag variable to track initialization status
+                <button id="start-button" class="new-demo-action-button" onclick="startPrediction()">Start</button>
+                <button id="stop-button" class="new-demo-action-button" onclick="stopPrediction()" disabled>Stop</button>
+            </div>
+            <div id="webcam-container" class="new-demo-webcam"></div>
+            <div id="label-container" class="new-demo-label"></div>
+            <div id="webcam-error-container" class="new-demo-error"></div>
+            <div id="model-error-container" class="new-demo-error"></div>
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
+            <script type="text/javascript">
+              const URL = "https://teachablemachine.withgoogle.com/models/iC5r7nsWm/";
+              let model, webcam, labelContainer, maxPredictions;
+              let webcamInitialized = false; // Flag variable to track webcam initialization status
+              let modelInitialized = false; // Flag variable to track model initialization status
 
-          async function init() {
-            const errorContainer = document.getElementById("error-container");
-            errorContainer.innerText = ""; // Clear error message at the beginning
+              async function init() {
+                const webcamErrorContainer = document.getElementById("webcam-error-container");
+                const modelErrorContainer = document.getElementById("model-error-container");
+                webcamErrorContainer.innerText = ""; // Clear webcam error message at the beginning
+                modelErrorContainer.innerText = ""; // Clear model error message at the beginning
 
-            if (initialized) {
-              return; // Return if already initialized
-            }
+                if (webcamInitialized && modelInitialized) {
+                  return; // Return if both webcam and model are already initialized
+                }
 
-            function displayError(message) {
-              errorContainer.innerText = message;
-            }
+                const modelURL = URL + "model.json";
+                const metadataURL = URL + "metadata.json";
 
-            const modelURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
+                try {
+                  if (!modelInitialized) {
+                    model = await tmImage.load(modelURL, metadataURL);
+                    modelInitialized = true;
+                  }
 
-            try {
-              model = await tmImage.load(modelURL, metadataURL);
-              const flip = true; // whether to flip the webcam
-              webcam = new tmImage.Webcam(400, 400, flip);
-              await webcam.setup();
-              await webcam.play();
+                  if (!webcamInitialized) {
+                    const flip = true; // whether to flip the webcam
+                    webcam = new tmImage.Webcam(400, 400, flip);
+                    await webcam.setup();
+                    await webcam.play();
 
-              document.getElementById("webcam-container").appendChild(webcam.canvas);
+                    document.getElementById("webcam-container").appendChild(webcam.canvas);
 
-              labelContainer = document.getElementById("label-container");
-              maxPredictions = model.getTotalClasses(); // Set the correct number of predictions
-              for (let i = 0; i < maxPredictions; i++) {
-                labelContainer.appendChild(document.createElement("div"));
+                    labelContainer = document.getElementById("label-container");
+                    maxPredictions = model.getTotalClasses(); // Set the correct number of predictions
+                    for (let i = 0; i < maxPredictions; i++) {
+                      labelContainer.appendChild(document.createElement("div"));
+                    }
+
+                    webcamInitialized = true;
+                    document.getElementById("start-button").disabled = true; // Disable the button after initialization
+                  }
+
+                  loop(); // Call the loop function
+                } catch (error) {
+                  if (!modelInitialized) {
+                    modelErrorContainer.innerText = "Failed to load the model. Please check the URL or try again later.";
+                  }
+                  if (!webcamInitialized) {
+                    webcamErrorContainer.innerText = "Failed to access the webcam. Please make sure it is properly connected and try again.";
+                  }
+                  console.error(error);
+                }
+              }
+              async function predict() {
+                const prediction = await model.predict(webcam.canvas);
+                for (let i = 0; i < maxPredictions; i++) {
+                  const classPrediction =
+                    prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+                  labelContainer.childNodes[i].innerHTML = classPrediction;
+                }
+              }
+              function startPrediction() {
+                init();
+                document.getElementById("start-button").disabled = true;
+                document.getElementById("stop-button").disabled = false;
+                predictionLoopId = requestAnimationFrame(loop);
               }
 
-              initialized = true; // Set initialization flag to true
-              document.getElementById("start-button").disabled = true; // Disable the button after initialization
-
-              loop(); // Call the loop function
-            } catch (error) {
-              displayError("Failed to initialize the webcam and model. Please check the URL, ensure the webcam is properly connected, or try again later.");
-              console.error(error);
-            }
-          }
-
-          async function loop() {
-            webcam.update();
-            await predict();
-            window.requestAnimationFrame(loop);
-          }
-
-          async function predict() {
-            const prediction = await model.predict(webcam.canvas);
-            for (let i = 0; i < maxPredictions; i++) {
-              const classPrediction =
-                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-              labelContainer.childNodes[i].innerHTML = classPrediction;
-            }
-          }
-          </script>
-        </div>
+              function stopPrediction() {
+                cancelAnimationFrame(predictionLoopId);
+                webcam.stop(); // Stop the webcam stream
+                webcamInitialized = false; // Reset webcam initialization flag
+                modelInitialized = false; // Reset model initialization flag
+                document.getElementById("webcam-container").innerHTML = ""; // Clear webcam container
+                document.getElementById("label-container").innerHTML = ""; // Clear label container
+                document.getElementById("start-button").disabled = false;
+                document.getElementById("stop-button").disabled = true;
+              }
+              async function loop() {
+                if (!webcamInitialized || !modelInitialized) {
+                  return; // Return if either webcam or model is not initialized
+                }
+                webcam.update();
+                await predict();
+                requestAnimationFrame(loop);
+              }
+            </script>
+          </div>
         <section class="demo-faq">
           <div class="demo-header1"><h2 class="demo-heading1">Q&amp;A</h2></div>
           <div class="demo-content">
