@@ -38,6 +38,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
       data-tag="font"
     />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
+
     <!--This is the head section-->
     <!-- <style> ... </style> -->
     <link
@@ -160,7 +163,7 @@
         </section>
           <div class="new-demo-section">
             <div class="new-demo-content">
-              <div class="new-demo-text">Let's explore the capabilities of our AI camera</div>
+              <div id="demo-text-container" class="new-demo-text code-style"></div>
                 <button id="start-button" class="new-demo-action-button" onclick="startPrediction()">Start</button>
                 <button id="stop-button" class="new-demo-action-button" onclick="stopPrediction()" disabled>Stop</button>
             </div>
@@ -175,10 +178,11 @@
               let model, webcam, labelContainer, maxPredictions;
               let webcamInitialized = false; // Flag variable to track webcam initialization status
               let modelInitialized = false; // Flag variable to track model initialization status
-
               async function init() {
                 const webcamErrorContainer = document.getElementById("webcam-error-container");
                 const modelErrorContainer = document.getElementById("model-error-container");
+                const webcamContainer = document.getElementById("webcam-container");
+
                 webcamErrorContainer.innerText = ""; // Clear webcam error message at the beginning
                 modelErrorContainer.innerText = ""; // Clear model error message at the beginning
 
@@ -197,10 +201,10 @@
 
                   if (!webcamInitialized) {
                     const flip = true; // whether to flip the webcam
-                    webcam = new tmImage.Webcam(400, 400, flip);
+                    webcam = new tmImage.Webcam(600, 600, flip);
                     await webcam.setup();
                     await webcam.play();
-
+                    adjustWebcamSize(true);
                     document.getElementById("webcam-container").appendChild(webcam.canvas);
 
                     labelContainer = document.getElementById("label-container");
@@ -208,7 +212,6 @@
                     for (let i = 0; i < maxPredictions; i++) {
                       labelContainer.appendChild(document.createElement("div"));
                     }
-
                     webcamInitialized = true;
                     document.getElementById("start-button").disabled = true; // Disable the button after initialization
                   }
@@ -220,6 +223,7 @@
                   }
                   if (!webcamInitialized) {
                     webcamErrorContainer.innerText = "Failed to access the webcam. Please make sure it is properly connected and try again.";
+                    adjustWebcamSize(webcamInitialized)
                   }
                   console.error(error);
                 }
@@ -238,7 +242,15 @@
                 document.getElementById("stop-button").disabled = false;
                 predictionLoopId = requestAnimationFrame(loop);
               }
-
+              function adjustWebcamSize(active) {
+                if (active) {
+                  document.getElementById("webcam-container").style.height = "600px";
+                  document.getElementById("webcam-container").style.marginBottom = "30px";
+                } else {
+                  document.getElementById("webcam-container").style.height = "1px"; // when there is no activity
+                  document.getElementById("webcam-container").style.marginBottom = "10px"; //  when there is no activity
+                }
+              }
               function stopPrediction() {
                 cancelAnimationFrame(predictionLoopId);
                 webcam.stop(); // Stop the webcam stream
@@ -248,6 +260,7 @@
                 document.getElementById("label-container").innerHTML = ""; // Clear label container
                 document.getElementById("start-button").disabled = false;
                 document.getElementById("stop-button").disabled = true;
+                adjustWebcamSize(webcamInitialized)
               }
               async function loop() {
                 if (!webcamInitialized || !modelInitialized) {
@@ -257,6 +270,22 @@
                 await predict();
                 requestAnimationFrame(loop);
               }
+            </script>
+            <script>
+              const textElement = document.getElementById("demo-text-container");
+              const text = "Let's explore the capabilities of our AI camera";
+              let index = 0;
+
+              function typeText() {
+                textElement.innerHTML = text.substring(0, index);
+                textElement.innerHTML += `<span class="cursor"></span>`;
+                index++;
+                if (index <= text.length) {
+                  setTimeout(typeText, 50);
+                }
+              }
+
+              typeText();
             </script>
           </div>
         <section class="demo-faq">
